@@ -1,0 +1,3 @@
+
+configure-network:
+  description: Configures 5G Network
