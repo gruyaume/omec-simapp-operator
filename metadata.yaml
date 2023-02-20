@@ -8,7 +8,7 @@ containers:
     resource: simapp-image
     mounts:
       - storage: simapp-volume
-        location: /etc/simapp/
+        location: /simapp/config
 
 resources:
   simapp-image:

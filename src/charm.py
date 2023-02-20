@@ -14,12 +14,12 @@ from lightkube.models.core_v1 import ServicePort
 from ops.charm import ActionEvent, CharmBase, PebbleReadyEvent
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus
-from ops.pebble import ExecError
+from ops.pebble import Layer
 
 logger = logging.getLogger(__name__)
 
-BASE_CONFIG_PATH = "/etc/simapp"
-CONFIG_FILE_NAME = "simappcfg.conf"
+BASE_CONFIG_PATH = "/simapp/config"
+CONFIG_FILE_NAME = "simapp.yaml"
 
 
 class SIMAPPOperatorCharm(CharmBase):
@@ -59,20 +59,31 @@ class SIMAPPOperatorCharm(CharmBase):
         if not self._config_file_is_written:
             event.fail(message="Config file is not written")
             return
-        process = self._container.exec(
-            command=["./bin/simapp", "-simapp", f"{BASE_CONFIG_PATH}/{CONFIG_FILE_NAME}"],
-            timeout=300,
-            environment=self._environment_variables,
-        )
-        try:
-            process.wait_output()
-        except ExecError as e:
-            logger.error("Exited with code %d. Stderr:", e.exit_code)
-            for line in e.stderr.splitlines():
-                logger.error("    %s", line)
-            event.fail(message=str(e))
-        logger.info("Successfully configured network")
+        self._container.add_layer("simapp", self._pebble_layer, combine=True)
+        self._container.replan()
         self.unit.status = ActiveStatus()
+
+    @property
+    def _pebble_layer(self) -> Layer:
+        """Returns pebble layer for the charm.
+
+        Returns:
+            Layer: Pebble Layer
+        """
+        return Layer(
+            {
+                "summary": "simapp layer",
+                "description": "pebble config layer for simapp",
+                "services": {
+                    "simapp": {
+                        "override": "replace",
+                        "startup": "enabled",
+                        "command": "/simapp/bin/simapp",
+                        "environment": self._environment_variables,
+                    },
+                },
+            }
+        )
 
     @property
     def _environment_variables(self) -> dict:

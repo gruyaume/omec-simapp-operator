@@ -49,12 +49,10 @@ class TestCharm(unittest.TestCase):
         mock_event.fail.assert_called_with(message="Container is not ready")
 
     @patch("charm.check_output")
-    @patch("ops.model.Container.exec")
     @patch("ops.model.Container.exists")
-    def test_given_can_connect_to_workload_and_config_file_is_written_when_configure_network_action_then_command_is_executed(  # noqa: E501
+    def test_given_can_connect_to_workload_and_config_file_is_written_when_configure_network_action_then_pebble_layer_is_created(  # noqa: E501
         self,
         patch_exists,
-        patch_exec,
         patch_check_output,
     ):
         pod_ip = "1.2.3.4"
@@ -65,11 +63,20 @@ class TestCharm(unittest.TestCase):
         mock_event = Mock()
         self.harness.charm._on_configure_network_action(event=mock_event)
 
-        patch_exec.assert_called_with(
-            command=["./bin/simapp", "-simapp", "/etc/simapp/simappcfg.conf"],
-            timeout=300,
-            environment={"POD_IP": pod_ip},
-        )
+        expected_plan = {
+            "services": {
+                "simapp": {
+                    "startup": "enabled",
+                    "override": "replace",
+                    "command": "/simapp/bin/simapp",
+                    "environment": {"POD_IP": "1.2.3.4"},
+                }
+            }
+        }
+
+        updated_plan = self.harness.get_container_pebble_plan("simapp").to_dict()
+
+        self.assertEqual(expected_plan, updated_plan)
 
     @patch("ops.model.Container.exec", new=Mock())
     @patch("charm.check_output")
