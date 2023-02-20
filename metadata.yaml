@@ -1,0 +1,26 @@
+name: simapp-operator
+display-name: 5G simapp operator
+summary: 5G simapp operator
+description: 5G simapp operator
+
+containers:
+  simapp:
+    resource: simapp-image
+    mounts:
+      - storage: simapp-volume
+        location: /simapp/config
+
+resources:
+  simapp-image:
+    type: oci-image
+    description: OCI image for 5G simapp
+    upstream-source: omecproject/simapp:main-a4f741a
+
+storage:
+  simapp-volume:
+    type: filesystem
+    minimum-size: 1M
+
+requires:
+  webui:
+    interface: webui
