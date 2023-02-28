@@ -1,21 +1,3 @@
-# simapp-operator
-
-Open source 5G Core simapp Operator.
-
-## Usage
-
-```bash
-juju deploy simapp-operator --trust --channel=edge
-```
-## Configuration
-
-### **use-default-config**: Use default configuration (default: false)
-
-This setting should only be used for testing purposes as it will use a default Network configuration with preset IMSI's and network slices.
-
-If enabled, the following configuration file will be used:
-
-```yaml
 configuration:
   device-groups:
   - imsis:
@@ -108,7 +90,7 @@ configuration:
       sst: 1
   provision-network-slice: false
   sub-provision-endpt:
-    addr: webui.my-network.svc.cluster.local
+    addr: webui
     port: 5000
   subscribers:
   - key: 5122250214c33e723a5dd523fc145fc0
@@ -133,8 +115,3 @@ logger:
   APP:
     ReportCaller: false
     debugLevel: info
-```
-
-## Image
-
-- **simapp**: omecproject/simapp:main-a4f741a

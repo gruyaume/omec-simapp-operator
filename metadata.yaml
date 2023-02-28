@@ -20,7 +20,3 @@ storage:
   simapp-volume:
     type: filesystem
     minimum-size: 1M
-
-requires:
-  webui:
-    interface: webui
