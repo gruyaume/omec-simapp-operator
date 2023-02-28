@@ -57,7 +57,7 @@ class SIMAPPOperatorCharm(CharmBase):
                 self.unit.status = WaitingStatus("Waiting for config file to be written")
             else:
                 self.unit.status = BlockedStatus(
-                    "Use `juju scp` to copy the config file to the unit and run the `configure-network` action"  # noqa: E501
+                    "Use `juju scp` to copy the config file to the unit and run the `configure-network` action"  # noqa: E501, W505
                 )
             return
         self._container.add_layer("simapp", self._pebble_layer, combine=True)

@@ -114,6 +114,6 @@ class TestCharm(unittest.TestCase):
         self.assertEqual(
             self.harness.model.unit.status,
             BlockedStatus(
-                "Use `juju scp` to copy the config file to the unit and run the `configure-network` action"
+                "Use `juju scp` to copy the config file to the unit and run the `configure-network` action"  # noqa: E501, W505
             ),
         )
