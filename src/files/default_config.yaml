@@ -90,7 +90,7 @@ configuration:
       sst: 1
   provision-network-slice: false
   sub-provision-endpt:
-    addr: webui.my-network.svc.cluster.local
+    addr: webui
     port: 5000
   subscribers:
   - key: 5122250214c33e723a5dd523fc145fc0

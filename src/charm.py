@@ -52,6 +52,10 @@ class SIMAPPOperatorCharm(CharmBase):
     def _on_simapp_pebble_ready(
         self, event: [PebbleReadyEvent, ConfigChangedEvent, ActionEvent]
     ) -> None:
+        if not self._container.can_connect():
+            self.unit.status = WaitingStatus("Waiting for container to be ready")
+            event.defer()
+            return
         if not self._config_file_is_written:
             if self._use_default_config:
                 self.unit.status = WaitingStatus("Waiting for config file to be written")
